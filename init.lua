@@ -15,6 +15,8 @@ vim.opt.expandtab = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 
+vim.g.coc_global_extensions = { "coc-clangd" }
+
 -- Instalar Lazy se não estiver instalado
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -27,7 +29,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Configurar plugins
 require("lazy").setup({
-    -- Autocompletar inteligente para C++
+    -- Autocomplete inteligente para C++
     {
         "neoclide/coc.nvim",
         branch = "release",
@@ -49,7 +51,47 @@ require("lazy").setup({
             })
         end
     },
-    "folke/tokyonight.nvim",  -- Tema
+
+    -- Autocomplete para () e {}
+    {
+        "windwp/nvim-autopairs",
+        config = function()
+            require("nvim-autopairs").setup({})
+        end
+    },
+    -- Tema
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
 })
 
-vim.cmd("colorscheme tokyonight-night") -- Ativa o tema dark
+-- Configurar teclas do autocomplete
+vim.api.nvim_set_keymap("i", "<Tab>", 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { noremap = true, expr = true, silent = true })
+vim.api.nvim_set_keymap("i", "<S-Tab>", 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', { noremap = true, expr = true, silent = true })
+vim.api.nvim_set_keymap("i", "<CR>", 'pumvisible() ? "\\<C-y>" : "\\<CR>"', { noremap = true, expr = true, silent = true })
+
+vim.opt.background = "dark"
+
+require("catppuccin").setup({
+ flavour = "mocha", -- Opções: latte, frappe, macchiato, mocha
+ integrations = {
+   treesitter = true,
+   native_lsp = {
+     enabled = true,
+     virtual_text = {
+       errors = { "italic" },
+       hints = { "italic" },
+       warnings = { "italic" },
+       information = { "italic" },
+     },
+     underlines = {
+       errors = { "underline" },
+       hints = { "underline" },
+       warnings = { "underline" },
+       information = { "underline" },
+     },
+   },
+   telescope = true,
+   nvimtree = true,
+ }
+})
+
+vim.cmd.colorscheme "catppuccin"
