@@ -1,97 +1,81 @@
--- Define a tecla líder como "\"
+-- ~/.config/nvim/init.lua
+-- MacOS
+
+-- Bootstrapping Lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git", "clone", "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup({
+  -- Plugins
+  {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
+  'neovim/nvim-lspconfig',
+  'hrsh7th/nvim-cmp',
+  'hrsh7th/cmp-nvim-lsp',
+  'L3MON4D3/LuaSnip',
+  'saadparwaiz1/cmp_luasnip',
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  {
+    "windwp/nvim-autopairs",
+    config = function()
+        require("nvim-autopairs").setup({})
+    end
+  },
+})
+
+require("cpp")
+
 vim.g.mapleader = "\\"
 
--- Mapeia \r para compilar
-vim.api.nvim_set_keymap("n", "<leader>r", ":w<CR>:!g++ -std=c++20 % -o %:r<CR>", { noremap = true, silent = true })
+-- Keymaps
+-- <leader>t compila e executa com g++-14
+vim.keymap.set("n", "<leader>t", ":!g++-14 -std=c++17 -Wall -Wextra % -o %:r && ./%:r<CR>")
+-- <leader>r só compila com g++-14
+vim.keymap.set("n", "<leader>r", ":!g++-14 -std=c++17 -Wall -Wextra % -o %:r<CR>")
 
--- Mapeia \t para compilar e rodar
-vim.api.nvim_set_keymap("n", "<leader>t", ":w<CR>:!g++ -std=c++20 % -o %:r && ./%:r<CR>", { noremap = true, silent = true })
 
-vim.opt.tabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
+
+vim.o.tabstop = 4       
+vim.o.shiftwidth = 4    
+vim.o.expandtab = true 
 
 -- Ativar números de linha
 vim.opt.number = true
 vim.opt.relativenumber = true
 
-vim.g.coc_global_extensions = { "coc-clangd" }
-
--- Instalar Lazy se não estiver instalado
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-    vim.fn.system({
-        "git", "clone", "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git", lazypath
-    })
-end
-vim.opt.rtp:prepend(lazypath)
-
--- Configurar plugins
-require("lazy").setup({
-    -- Autocomplete inteligente para C++
-    {
-        "neoclide/coc.nvim",
-        branch = "release",
-        config = function()
-            vim.cmd([[
-                let g:coc_global_extensions = ['coc-clangd']
-            ]])
-        end
-    },
-    
-    -- Melhor highlight para C++ com Treesitter
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-            require("nvim-treesitter.configs").setup({
-                ensure_installed = { "cpp", "c" },
-                highlight = { enable = true },
-            })
-        end
-    },
-
-    -- Autocomplete para () e {}
-    {
-        "windwp/nvim-autopairs",
-        config = function()
-            require("nvim-autopairs").setup({})
-        end
-    },
-    -- Tema
-    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
-})
-
--- Configurar teclas do autocomplete
-vim.api.nvim_set_keymap("i", "<Tab>", 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { noremap = true, expr = true, silent = true })
-vim.api.nvim_set_keymap("i", "<S-Tab>", 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', { noremap = true, expr = true, silent = true })
-vim.api.nvim_set_keymap("i", "<CR>", 'pumvisible() ? "\\<C-y>" : "\\<CR>"', { noremap = true, expr = true, silent = true })
-
 vim.opt.background = "dark"
 
 require("catppuccin").setup({
- flavour = "mocha", -- Opções: latte, frappe, macchiato, mocha
- integrations = {
-   treesitter = true,
-   native_lsp = {
-     enabled = true,
-     virtual_text = {
-       errors = { "italic" },
-       hints = { "italic" },
-       warnings = { "italic" },
-       information = { "italic" },
-     },
-     underlines = {
-       errors = { "underline" },
-       hints = { "underline" },
-       warnings = { "underline" },
-       information = { "underline" },
-     },
-   },
-   telescope = true,
-   nvimtree = true,
- }
+  flavour = "mocha", 
+  integrations = {
+    treesitter = true,
+    native_lsp = {
+      enabled = true,
+      virtual_text = {
+        errors = { "italic" },
+        hints = { "italic" },
+        warnings = { "italic" },
+        information = { "italic" },
+      },
+      underlines = {
+        errors = { "underline" },
+        hints = { "underline" },
+        warnings = { "underline" },
+        information = { "underline" },
+      },
+    },
+    telescope = true,
+    nvimtree = true,
+  }
 })
 
 vim.cmd.colorscheme "catppuccin"
+
+
+
