@@ -1,5 +1,4 @@
 -- ~/.config/nvim/init.lua
--- MacOS
 
 -- Bootstrapping Lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -11,6 +10,16 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
+
+vim.api.nvim_create_autocmd("BufNewFile", {
+  pattern = "*.cpp",
+  callback = function()
+    local template_path = vim.fn.stdpath("config") .. "/templates/template.cpp"
+    if vim.fn.line("$") == 1 and vim.fn.getline(1) == "" then
+      vim.cmd("0r " .. template_path)
+    end
+  end,
+})
 
 require("lazy").setup({
   -- Plugins
@@ -34,23 +43,17 @@ require("cpp")
 vim.g.mapleader = "\\"
 
 -- Keymaps
--- <leader>t compila e executa com g++-14
 vim.keymap.set("n", "<leader>t", ":!g++-14 -std=c++17 -Wall -Wextra % -o %:r && ./%:r<CR>")
--- <leader>r só compila com g++-14
 vim.keymap.set("n", "<leader>r", ":!g++-14 -std=c++17 -Wall -Wextra % -o %:r<CR>")
-
-
-
 vim.o.tabstop = 4       
 vim.o.shiftwidth = 4    
 vim.o.expandtab = true 
 
--- Ativar números de linha
+-- Lines
 vim.opt.number = true
 vim.opt.relativenumber = true
 
 vim.opt.background = "dark"
-
 require("catppuccin").setup({
   flavour = "mocha", 
   integrations = {
@@ -74,8 +77,4 @@ require("catppuccin").setup({
     nvimtree = true,
   }
 })
-
 vim.cmd.colorscheme "catppuccin"
-
-
-
