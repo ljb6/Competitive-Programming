@@ -14,7 +14,7 @@ using namespace std;
 
 int main() { _
 
-    vector<pair<int, int>> b(60, {0, 0});
+    vector<pair<int, int>> b(   60, {0, 0});
     int n; cin >> n;
     while (n--) {
         int s; cin >> s;
